@@ -803,11 +803,11 @@
                     }
                 })
                 .catch(err => {
-                    console.error("Transmission Exception:", err);
-                    alert("System Timeout: Data saved in offline cache. Retransmitting...");
-                    modal.classList.add('active'); // Graceful fallback UX
-                    bookingForm.reset();
-                });
+    console.error("Transmission Exception:", err);
+    alert("System Timeout: Data saved in offline cache. Retransmitting...");
+    modal.classList.add('active'); // Graceful fallback UX
+    bookingForm.reset();
+});
             });
         }
 
