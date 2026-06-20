@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise OS Dashboard Suite | Business Clinic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0052CC;
+            --primary-dark: #0747A6;
+            --primary-light: #DEEBFF;
+            --secondary: #172B4D;
+            --success: #36B37E;
+            --bg-base: #F4F5F7;
+            --text-main: #172B4D;
+            --text-muted: #5E6C84;
+            --radius-md: 12px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --transition: all 0.2s ease-in-out;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Dashboard Shell Navigation */
+        .sidebar { width: 280px; background: var(--secondary); color: white; display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-brand { height: 80px; display: flex; align-items: center; padding: 0 32px; font-size: 22px; font-weight: 800; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .sidebar-menu { padding: 32px 0; flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
+        .menu-item { padding: 12px 32px; color: #A5ADBA; font-weight: 500; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: var(--transition); }
+        .menu-item:hover, .menu-item.active { color: white; background: rgba(255,255,255,0.06); border-left: 4px solid var(--primary); }
+        .user-panel { padding: 32px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 6px; }
+
+        /* Main Shell Layout Panels */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .topbar { height: 80px; background: white; border-bottom: 1px solid #DFE1E6; display: flex; justify-content: space-between; align-items: center; padding: 0 48px; }
+        .workspace { flex-grow: 1; padding: 48px; overflow-y: auto; display: none; }
+        .workspace.active { display: block; }
+        
+        /* Data Presentation Engine */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px; margin-bottom: 48px; }
+        .kpi-card { background: white; padding: 32px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); border: 1px solid #DFE1E6; display: flex; flex-direction: column; gap: 8px; }
+        .kpi-val { font-size: 36px; font-weight: 800; color: var(--primary); }
+        .kpi-label { font-size: 13px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+        
+        .data-table-wrapper { background: white; border-radius: var(--radius-md); border: 1px solid #DFE1E6; overflow: hidden; box-shadow: var(--shadow-sm); }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        .data-table th { background: #F4F5F7; padding: 18px 24px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid #DFE1E6; }
+        .data-table td { padding: 20px 24px; border-bottom: 1px solid #DFE1E6; color: var(--secondary); vertical-align: middle; }
+        .data-table tr:hover { background: #FAFBFC; }
+        
+        .badge-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .status-Pending { background: #FFF0B3; color: #6A3900; }
+        .status-Assigned { background: #DEEBFF; color: #0747A6; }
+        .status-Confirmed { background: #E3FCEF; color: #006644; }
+        
+        .btn-action { padding: 6px 12px; background: var(--primary-light); color: var(--primary); border-radius: 6px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: var(--transition); }
+        .btn-action:hover { background: var(--primary); color: white; }
+
+        /* Form Controls Overriding Panel */
+        .modal-form-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(23,43,77,0.7); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; }
+        .modal-form-overlay.active { display: flex; }
+        .modal-box { background: white; padding: 48px; border-radius: var(--radius-lg); width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 14px; font-weight: 600; color: var(--secondary); margin-bottom: 8px; }
+        .form-control { width: 100%; padding: 12px 16px; border: 1px solid #DFE1E6; border-radius: 8px; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-brand"><i class="fa-solid fa-laptop-medical"></i> Clinic OS</div>
+        <ul class="sidebar-menu">
+            <li class="menu-item active" onclick="switchTab('leadsTab', this)"><i class="fa-solid fa-list-check"></i> Lead Management</li>
+            <li class="menu-item" onclick="switchTab('analyticsTab', this)"><i class="fa-solid fa-chart-pie"></i> Operational Analytics</li>
+        </ul>
+        <div class="user-panel">
+            <strong id="userDisplayName">System Specialist</strong>
+            <span id="userDisplayRole" style="font-size: 12px; color: #A5ADBA;">Administrator</span>
+            <button onclick="localStorage.clear(); window.location.href='portal.html';" style="margin-top: 16px; background: transparent; color: #FFAB00; text-align: left; font-size: 13px; cursor: pointer;"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <h3 id="panelTitle">Lead Processing Pipeline</h3>
+            <div style="font-size: 13px; color: var(--text-muted);" id="ipLoggingBadge">Network Connection Tracked securely.</div>
+        </header>
+
+        <section id="leadsTab" class="workspace active">
+            <div style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center;">
+                <p style="color: var(--text-muted);">Incoming leads funnel. Authorized clinical staff can process intake forms or update case statuses.</p>
+                <button class="btn-action" onclick="refreshLeadsData()"><i class="fa-solid fa-rotate"></i> Sync Database</button>
+            </div>
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Lead ID</th>
+                            <th>Full Name</th>
+                            <th>Department</th>
+                            <th>Schedule</th>
+                            <th>Status Lifecycle</th>
+                            <th>Attending Physician</th>
+                            <th>Operations</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadsTableBody">
+                        <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 48px;">Resolving dynamic sheets storage pool...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="analyticsTab" class="workspace">
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Gross Revenue Realized</div>
+                    <div class="kpi-val" id="kpiSales">$0.00</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Volume Processing Stream</div>
+                    <div class="kpi-val" id="kpiVolume">0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Clinical Bookings Target</div>
+                    <div class="kpi-val" id="kpiBookings">0</div>
+                </div>
+            </div>
+            <div class="data-table-wrapper">
+                <div style="padding: 24px; background: #F4F5F7; border-bottom: 1px solid #DFE1E6; font-weight: 600;">Departmental Activity Distribution Streams</div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Medical Module</th>
+                            <th>Execution Density</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deptTableBody">
+                        <tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 32px;">Awaiting aggregation queries.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <div id="editModal" class="modal-form-overlay">
+        <div class="modal-box">
+            <h3 style="margin-bottom: 8px;">Override Lead Intake Ledger</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 32px;">Update patient data or routing tags. This alters the source Google Sheets registry instantly.</p>
+            
+            <form id="leadEditForm" onsubmit="submitLeadUpdate(event)">
+                <input type="hidden" id="edit_leadId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" id="edit_fname" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" id="edit_lname" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Clinical Module</label>
+                    <select id="edit_service" class="form-control">
+                        <option value="General">General Consultation</option>
+                        <option value="Dental">Dental Care</option>
+                        <option value="Skin">Skin Treatment</option>
+                        <option value="Physio">Physiotherapy</option>
+                        <option value="Checkup">Health Checkup</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Target Date</label>
+                        <input type="date" id="edit_date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Time Interval</label>
+                        <select id="edit_time" class="form-control">
+                            <option value="Morning">Morning (9AM - 12PM)</option>
+                            <option value="Afternoon">Afternoon (12PM - 4PM)</option>
+                            <option value="Evening">Evening (4PM - 7PM)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Booking Stage Status</label>
+                    <select id="edit_status" class="form-control">
+                        <option value="Pending">Pending Assignment</option>
+                        <option value="Assigned">Physician Assigned</option>
+                        <option value="Confirmed">Confirmed Schedule</option>
+                        <option value="Completed">Execution Completed</option>
+                        <option value="Cancelled">Aborted Transaction</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Assign Attending Physician (Email)</label>
+                    <input type="text" id="edit_doctor" class="form-control" placeholder="doctor@clinic.com">
+                </div>
+                <div style="display: flex; gap: 16px; margin-top: 32px;">
+                    <button type="submit" class="btn-action" style="flex-grow: 1; padding: 16px; background: var(--primary); color: white;">Commit Changes Registry</button>
+                    <button type="button" class="btn-action" style="width: 140px; background: #DFE1E6; color: var(--secondary);" onclick="document.getElementById('editModal').classList.remove('active')">Cancel Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec";
+        let sessionUser = null;
+        let globalLeadsCache = [];
+        let clientIp = "127.0.0.1";
+        let clientGeo = "San Francisco, US";
+
+        // Trace Client IP via API for Auditing System Logs
+        fetch('https://api64.ipify.org?format=json')
+        .then(res => res.json())
+        .then(res => {
+            clientIp = res.ip;
+            document.getElementById('ipLoggingBadge').innerHTML = `Protected Access Network Gateway Node Logged [IP: ${clientIp}]`;
+            return fetch('https://ipapi.co/json/');
+        })
+        .then(res => res.json())
+        .then(res => {
+            clientGeo = `${res.city}, ${res.country_name}`;
+        })
+        .catch(e => console.error("Telemetry Logging Exception:", e));
+
+        // Load Session Profile
+        window.addEventListener('DOMContentLoaded', () => {
+            const sessionRaw = localStorage.getItem("ClinicOS_Session");
+            if(!sessionRaw) {
+                alert("Session Expired: Re-routing to authentication portal.");
+                window.location.href = "portal.html";
+                return;
+            }
+            sessionUser = JSON.parse(sessionRaw);
+            
+            document.getElementById('userDisplayName').innerText = sessionUser.name;
+            document.getElementById('userDisplayRole').innerText = `${sessionUser.role} • ${sessionUser.department}`;
+            
+            // Limit functional access depending on Role permissions
+            if(sessionUser.role !== "Admin") {
+                const analyticsTabBtn = document.querySelector(".sidebar-menu .menu-item:nth-child(2)");
+                if(analyticsTabBtn) analyticsTabBtn.remove();
+            }
+            
+            refreshLeadsData();
+        });
+
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.workspace').forEach(ws => ws.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            el.classList.add('active');
+            
+            if(tabId === 'analyticsTab' && sessionUser.role === "Admin") {
+                loadAnalyticsSuite();
+            }
+        }
+
+        function refreshLeadsData() {
+            fetch(`${GOOGLE_SCRIPT_URL}?action=fetchLeads`)
+            .then(res => res.json())
+            .then(res => {
+                if(res.success) {
+                    globalLeadsCache = res.leads;
+                    // Apply filtering logic based on access permissions
+                    let filtered = res.leads;
+                    if(sessionUser.role === "Doctor") {
+                        filtered = res.leads.filter(l => l.Assigned_Doctor === sessionUser.email);
+                    } else if(sessionUser.role === "Employee") {
+                        filtered = res.leads.filter(l => l.Assigned_Staff === sessionUser.email);
+                    }
+                    populateLeadsTable(filtered);
+                }
+            }).catch(e => alert("Could not pull fresh database state: " + e.message));
+        }
+
+        function populateLeadsTable(leads) {
+            const tbody = document.getElementById('leadsTableBody');
+            if(!leads || leads.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 48px;">No lead transaction allocations located.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = leads.map(l => `
+                <tr>
+                    <td><strong>${l.Lead_ID || '---'}</strong></td>
+                    <td>${l.First_Name || ''} ${l.Last_Name || ''}</td>
+                    <td>${l.Service_Module || 'General'}</td>
+                    <td>${l.Preferred_Date ? new Date(l.Preferred_Date).toLocaleDateString() : 'TBD' }<br><span style="font-size:12px; color:var(--text-muted);">${l.Preferred_Time || ''}</span></td>
+                    <td><span class="badge-status status-${l.Booking_Status}">${l.Booking_Status || 'Pending'}</span></td>
+                    <td>${l.Assigned_Doctor || 'Unassigned Queue'}</td>
+                    <td><button class="btn-action" onclick="openEditModal('${l.Lead_ID}')"><i class="fa-solid fa-pen-to-square"></i> Modify Ledger</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function openEditModal(leadId) {
+            const lead = globalLeadsCache.find(l => l.Lead_ID === leadId);
+            if(!lead) return;
+            
+            // Format valid Date values securely
+            let formattedDate = '';
+            if(lead.Preferred_Date) {
+                const d = new Date(lead.Preferred_Date);
+                formattedDate = d.toISOString().split('T')[0];
+            }
+
+            document.getElementById('edit_leadId').value = lead.Lead_ID;
+            document.getElementById('edit_fname').value = lead.First_Name;
+            document.getElementById('edit_lname').value = lead.Last_Name;
+            document.getElementById('edit_service').value = lead.Service_Module;
+            document.getElementById('edit_date').value = formattedDate;
+            document.getElementById('edit_time').value = lead.Preferred_Time;
+            document.getElementById('edit_status').value = lead.Booking_Status;
+            document.getElementById('edit_doctor').value = lead.Assigned_Doctor;
+
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function submitLeadUpdate(e) {
+            e.preventDefault();
+            const leadId = document.getElementById('edit_leadId').value;
+            
+            const updates = {
+                First_Name: document.getElementById('edit_fname').value,
+                Last_Name: document.getElementById('edit_lname').value,
+                Service_Module: document.getElementById('edit_service').value,
+                Preferred_Date: document.getElementById('edit_date').value,
+                Preferred_Time: document.getElementById('edit_time').value,
+                Booking_Status: document.getElementById('edit_status').value,
+                Assigned_Doctor: document.getElementById('edit_doctor').value,
+                Assigned_Staff: sessionUser.email // Registers current logged in agent processing queue
+            };
+
+            const payload = {
+                action: "updateLead",
+                leadId: leadId,
+                updates: updates,
+                userEmail: sessionUser.email,
+                ip: clientIp,
+                geo: clientGeo
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.success) {
+                    alert("Lead registry transaction modified successfully.");
+                    document.getElementById('editModal').classList.remove('active');
+                    refreshLeadsData();
+                } else {
+                    alert("Sync Error: " + res.error);
+                }
+            }).catch(err => alert("Connection timeout error: " + err));
+        }
+
+        function loadAnalyticsSuite() {
+            fetch(`${GOOGLE_SCRIPT_URL}?action=fetchDashboardData&email=${sessionUser.email}&role=${sessionUser.role}`)
+            .then(res => res.json())
+            .then(res => {
+                if(res.success) {
+                    const data = res.data;
+                    document.getElementById('kpiSales').innerText = `$${parseFloat(data.totalSales || 0).toFixed(2)}`;
+                    document.getElementById('kpiVolume').innerText = data.totalVolume || 0;
+                    document.getElementById('kpiBookings').innerText = data.leads.filter(l => l.Booking_Status === "Confirmed").length || 0;
+                    
+                    const deptBody = document.getElementById('deptTableBody');
+                    const breakdn = data.departmentalBreakdown || {};
+                    
+                    deptBody.innerHTML = Object.keys(breakdn).map(dept => `
+                        <tr>
+                            <td><strong>${dept}</strong></td>
+                            <td>${breakdn[dept]} Forms Processed</td>
+                        </tr>
+                    `).join('');
+                }
+            }).catch(e => console.error("Telemetry Data Feed Exception", e));
+        }
+    </script>
+</body>
+</html>

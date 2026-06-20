@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Team | Business Clinic OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0052CC;
+            --primary-dark: #0747A6;
+            --secondary: #172B4D;
+            --bg-base: #F4F5F7;
+            --text-muted: #5E6C84;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-base); padding-top: 80px; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .page-header { background: var(--secondary); color: white; padding: 80px 0; text-align: center; border-radius: 0 0 40px 40px; margin-bottom: 60px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
+        .doc-card { background: white; border-radius: 20px; overflow: hidden; border: 1px solid #DFE1E6; box-shadow: 0 1px 2px rgba(0,0,0,0.05); text-align: center; }
+        .doc-img { height: 250px; background: linear-gradient(135deg, #DEEBFF, #E6FFFA); display: flex; align-items: center; justify-content: center; font-size: 64px; color: var(--primary); }
+        .doc-info { padding: 24px; }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="page-header">
+            <h1>Specialist Medical Staff</h1>
+            <p>World-class clinical professionals operating on our premium digital cloud infrastructure.</p>
+        </div>
+        <div class="container">
+            <div class="grid-3">
+                <div class="doc-card">
+                    <div class="doc-img"><i class="fa-solid fa-user-doctor"></i></div>
+                    <div class="doc-info">
+                        <span style="color: var(--primary); font-weight: 700; font-size: 13px; text-transform: uppercase;">Cardiology Lead • License: #MD-88410</span>
+                        <h3 style="margin: 8px 0;">Dr. Marcus Vance</h3>
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">MD, FACC • 15 Yrs Track Record</p>
+                    </div>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-img"><i class="fa-solid fa-user-nurse"></i></div>
+                    <div class="doc-info">
+                        <span style="color: var(--primary); font-weight: 700; font-size: 13px; text-transform: uppercase;">Lead Dermatologist • License: #DL-99422</span>
+                        <h3 style="margin: 8px 0;">Dr. Elena Rostova</h3>
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">MBBS, MD • 10 Yrs Track Record</p>
+                    </div>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-img"><i class="fa-solid fa-user-md"></i></div>
+                    <div class="doc-info">
+                        <span style="color: var(--primary); font-weight: 700; font-size: 13px; text-transform: uppercase;">Orthopedic Surgeon • License: #OS-11054</span>
+                        <h3 style="margin: 8px 0;">Dr. James Chen</h3>
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 16px;">MS Ortho • 12 Yrs Track Record</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

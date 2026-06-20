@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services | Business Clinic OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0052CC;
+            --primary-dark: #0747A6;
+            --primary-light: #DEEBFF;
+            --secondary: #172B4D;
+            --bg-base: #F4F5F7;
+            --text-main: #172B4D;
+            --text-muted: #5E6C84;
+            --radius-lg: 20px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); padding-top: 80px; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+        .page-header { background: var(--secondary); color: white; padding: 80px 0; text-align: center; border-radius: 0 0 40px 40px; margin-bottom: 60px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
+        .service-card { padding: 32px; background: white; border: 1px solid #DFE1E6; border-radius: var(--radius-lg); }
+        .service-icon { width: 64px; height: 64px; background: var(--primary-light); color: var(--primary); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 24px; }
+        .btn-primary { width: 100%; padding: 12px; background: var(--primary); color: white; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <nav style="position: fixed; top: 0; width: 100%; background: white; border-bottom: 1px solid #DFE1E6; z-index: 1000;">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; height: 80px;">
+            <a href="index.html" style="font-size: 24px; font-weight: 800; color: var(--secondary);"><i class="fa-solid fa-laptop-medical"></i> Clinic OS</a>
+        </div>
+    </nav>
+    <main>
+        <div class="page-header">
+            <h1>Platform Modules & Medical Services</h1>
+            <p>Enterprise-grade digital care protocols securely managed by our centralized operating system.</p>
+        </div>
+        <div class="container">
+            <div class="grid-3">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-tooth"></i></div>
+                    <h3>Dental Care Module</h3>
+                    <p>Advanced oral health tracking, root canal ops, aesthetic charting, and automated recurrent cleaning alerts pushed natively via CRM.</p>
+                    <div style="margin: 20px 0; border-top: 1px solid #DFE1E6; padding-top: 16px;">
+                        <strong style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Duration:</strong> <span>30 - 60 mins</span>
+                    </div>
+                    <button class="btn-primary" onclick="window.location.href='index.html#booking'">Deploy Intake Booking</button>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-spa"></i></div>
+                    <h3>Dermatology & Skin Suite</h3>
+                    <p>Cosmetic procedure operations, laser therapy logging, integrated skin imaging, and automated post-care follow-up messages.</p>
+                    <div style="margin: 20px 0; border-top: 1px solid #DFE1E6; padding-top: 16px;">
+                        <strong style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Duration:</strong> <span>45 mins</span>
+                    </div>
+                    <button class="btn-primary" onclick="window.location.href='index.html#booking'">Deploy Intake Booking</button>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-person-walking"></i></div>
+                    <h3>Physiotherapy & Rehab</h3>
+                    <p>Sports recovery tracking, physical rehabilitation, chronic pain monitoring pathways, and scheduled physical therapy regimes.</p>
+                    <div style="margin: 20px 0; border-top: 1px solid #DFE1E6; padding-top: 16px;">
+                        <strong style="font-size: 12px; color: var(--text-muted); text-transform: uppercase;">Duration:</strong> <span>60 mins</span>
+                    </div>
+                    <button class="btn-primary" onclick="window.location.href='index.html#booking'">Deploy Intake Booking</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
