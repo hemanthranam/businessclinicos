@@ -788,20 +788,26 @@
                 };
 
                 fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                })
-                .then(res => res.json())
-                .then(res => {
-                    if(res.success) {
-                        modal.classList.add('active');
-                        bookingForm.reset();
-                    } else {
-                        alert("Transaction Error: " + res.error);
-                    }
-                })
+    method: 'POST',
+    mode: 'cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+})
+.then(res => res.json())
+.then(res => {
+    if(res.success) {
+        modal.classList.add('active');
+        bookingForm.reset();
+    } else {
+        alert("Transaction Error: " + res.error);
+    }
+})
+.catch(err => {
+    console.error("Transmission Exception:", err);
+    alert("System Timeout: Data saved in offline cache. Retransmitting..."); // <--- THIS IS FIRING
+    modal.classList.add('active'); 
+    bookingForm.reset();
+});
                 .catch(err => {
     console.error("Transmission Exception:", err);
     alert("System Timeout: Data saved in offline cache. Retransmitting...");
